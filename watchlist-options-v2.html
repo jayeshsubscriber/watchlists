@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Watchlist UX Options - Extended</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            color: #888;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00C805;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 40px 0 20px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .option-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .option-header {
+            padding: 16px 20px;
+            background: #222;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        .option-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-robinhood { background: #00C805; color: black; }
+        .badge-zerodha { background: #387ED1; color: white; }
+        .badge-coinbase { background: #0052FF; color: white; }
+        .badge-new { background: #F59E0B; color: black; }
+        .badge-hybrid { background: #8B5CF6; color: white; }
+
+        .option-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .phone-frame {
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone-screen {
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 320px;
+            border: 2px solid #333;
+        }
+
+        /* Robinhood Style */
+        .rh-header {
+            background: #000;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rh-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .rh-icon {
+            width: 32px;
+            height: 32px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .rh-list-card {
+            margin: 8px 16px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .rh-list-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .rh-list-info {
+            flex: 1;
+        }
+
+        .rh-list-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .rh-list-meta {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .rh-list-arrow {
+            color: #666;
+            font-size: 18px;
+        }
+
+        .rh-section-title {
+            padding: 20px 16px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rh-type-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .rh-badge-auto { background: #00C805; color: black; }
+        .rh-badge-preset { background: #387ED1; color: white; }
+
+        /* Zerodha/Kite Style */
+        .kite-header {
+            background: #387ED1;
+            padding: 16px;
+        }
+
+        .kite-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .kite-tabs {
+            display: flex;
+            background: #387ED1;
+            padding: 0 16px 12px;
+            gap: 4px;
+            overflow-x: auto;
+        }
+
+        .kite-tab {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .kite-tab.active {
+            background: white;
+            color: #387ED1;
+        }
+
+        .kite-market-bar {
+            background: #1a2332;
+            padding: 12px 16px;
+            display: flex;
+            gap: 24px;
+        }
+
+        .kite-index {
+            font-size: 12px;
+        }
+
+        .kite-index-name {
+            color: #888;
+        }
+
+        .kite-index-value {
+            color: #00C805;
+            font-weight: 600;
+        }
+
+        /* Bottom Sheet Style */
+        .bs-header {
+            background: #5C2D4E;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bs-list-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .bs-list-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .bs-dropdown-icon {
+            color: white;
+            font-size: 12px;
+        }
+
+        .bs-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+        }
+
+        .bs-sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: #444;
+            border-radius: 2px;
+            margin: 0 auto 16px;
+        }
+
+        .bs-sheet-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .bs-sheet-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .bs-sheet-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .bs-sheet-item-name {
+            flex: 1;
+            font-size: 14px;
+            color: white;
+        }
+
+        .bs-sheet-item-count {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Search First Style */
+        .sf-search-bar {
+            margin: 12px 16px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sf-search-icon {
+            color: #666;
+        }
+
+        .sf-search-placeholder {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .sf-quick-access {
+            padding: 16px;
+        }
+
+        .sf-quick-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .sf-quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sf-chip {
+            padding: 8px 14px;
+            background: #1a1a1a;
+            border-radius: 20px;
+            font-size: 13px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sf-chip-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        /* Folder Grid Style */
+        .fg-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 16px;
+        }
+
+        .fg-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .fg-subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .fg-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .fg-folder {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .fg-folder-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .fg-icon-list { background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); }
+        .fg-icon-screener { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+        .fg-icon-preset { background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); }
+        .fg-icon-recent { background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%); }
+
+        .fg-folder-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .fg-folder-count {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Analysis */
+        .option-analysis {
+            padding: 16px 20px;
+            border-top: 1px solid #333;
+            background: #151515;
+        }
+
+        .analysis-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 12px;
+        }
+
+        .analysis-label {
+            color: #888;
+        }
+
+        .analysis-value {
+            color: white;
+            font-weight: 500;
+        }
+
+        .analysis-value.good { color: #00C805; }
+        .analysis-value.medium { color: #F59E0B; }
+        .analysis-value.bad { color: #EF4444; }
+
+        /* Stock row common */
+        .stock-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid #222;
+        }
+
+        .stock-symbol {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .stock-name {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .stock-price {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00C805;
+        }
+
+        .stock-change {
+            font-size: 11px;
+            color: #00C805;
+        }
+
+        .stock-price.negative, .stock-change.negative {
+            color: #EF4444;
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            max-width: 1400px;
+            margin: 60px auto 40px;
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #333;
+        }
+
+        .comparison-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .comparison-table th {
+            font-weight: 600;
+            color: #888;
+            background: #222;
+        }
+
+        .comparison-table td {
+            color: #ccc;
+        }
+
+        .comparison-table tr:hover td {
+            background: #222;
+        }
+
+        .check { color: #00C805; }
+        .cross { color: #EF4444; }
+
+        .rec-badge {
+            display: inline-block;
+            background: #00C805;
+            color: black;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* Hybrid approach */
+        .hybrid-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+            padding: 16px;
+        }
+
+        .hybrid-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .hybrid-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .hybrid-type-pills {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px 16px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+            overflow-x: auto;
+        }
+
+        .hybrid-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #888;
+            background: rgba(255,255,255,0.05);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hybrid-pill.active {
+            background: white;
+            color: #1a1a2e;
+        }
+
+        .hybrid-pill-icon {
+            font-size: 14px;
+        }
+
+        .hybrid-list-tabs {
+            display: flex;
+            padding: 12px 16px;
+            gap: 16px;
+            background: #000;
+            overflow-x: auto;
+        }
+
+        .hybrid-list-tab {
+            font-size: 13px;
+            color: #666;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            position: relative;
+        }
+
+        .hybrid-list-tab.active {
+            color: white;
+        }
+
+        .hybrid-list-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #00C805;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>Watchlist UX - Extended Options</h1>
+        <p>6 approaches including patterns from Robinhood, Zerodha, Coinbase & more</p>
+    </div>
+
+    <div class="section-title">Industry Patterns</div>
+
+    <div class="options-grid">
+        <!-- Option 4: Robinhood Style -->
+        <div class="option-card">
+            <div class="option-header">
+                <span class="option-badge badge-robinhood">Robinhood</span>
+                <span class="option-title">Lists Screen</span>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="rh-header">
+                        <span class="rh-title">Lists</span>
+                        <div class="rh-icon">+</div>
+                    </div>
+                    
+                    <div class="rh-section-title">My Lists</div>
+                    
+                    <div class="rh-list-card">
+                        <div class="rh-list-icon">⭐</div>
+                        <div class="rh-list-info">
+                            <div class="rh-list-name">Favorites</div>
+                            <div class="rh-list-meta">12 items</div>
+                        </div>
+                        <span class="rh-list-arrow">›</span>
+                    </div>
+
+                    <div class="rh-list-card">
+                        <div class="rh-list-icon">📈</div>
+                        <div class="rh-list-info">
+                            <div class="rh-list-name">
+                                High Momentum
+                                <span class="rh-type-badge rh-badge-auto">AUTO</span>
+                            </div>
+                            <div class="rh-list-meta">Screener · 8 items</div>
+                        </div>
+                        <span class="rh-list-arrow">›</span>
+                    </div>
+
+                    <div class="rh-section-title">Discover</div>
+
+                    <div class="rh-list-card">
+                        <div class="rh-list-icon" style="background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);">🏥</div>
+                        <div class="rh-list-info">
+                            <div class="rh-list-name">
+                                Healthcare
+                                <span class="rh-type-badge rh-badge-preset">PRESET</span>
+                            </div>
+                            <div class="rh-list-meta">45 items · Following</div>
+                        </div>
+                        <span class="rh-list-arrow">›</span>
+                    </div>
+
+                    <div class="rh-list-card">
+                        <div class="rh-list-icon" style="background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);">🕐</div>
+                        <div class="rh-list-info">
+                            <div class="rh-list-name">Recent</div>
+                            <div class="rh-list-meta">Last 10 viewed</div>
+                        </div>
+                        <span class="rh-list-arrow">›</span>
+                    </div>
+                </div>
+            </div>
+            <div class="option-analysis">
+                <div class="analysis-row">
+                    <span class="analysis-label">Taps to see stocks</span>
+                    <span class="analysis-value medium">2 taps</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">List management</span>
+                    <span class="analysis-value good">Excellent</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Quick switching</span>
+                    <span class="analysis-value bad">Poor</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Best for</span>
+                    <span class="analysis-value">Organize many lists</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option 5: Zerodha/Kite Style -->
+        <div class="option-card">
+            <div class="option-header">
+                <span class="option-badge badge-zerodha">Zerodha Kite</span>
+                <span class="option-title">Number Tabs</span>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="kite-header">
+                        <span class="kite-title">Watchlist</span>
+                    </div>
+                    
+                    <div class="kite-tabs">
+                        <div class="kite-tab active">1</div>
+                        <div class="kite-tab">2</div>
+                        <div class="kite-tab">3</div>
+                        <div class="kite-tab">4</div>
+                        <div class="kite-tab">5</div>
+                        <div class="kite-tab">6</div>
+                        <div class="kite-tab">7</div>
+                    </div>
+
+                    <div class="kite-market-bar">
+                        <div class="kite-index">
+                            <span class="kite-index-name">NIFTY </span>
+                            <span class="kite-index-value">26,042 ↑</span>
+                        </div>
+                        <div class="kite-index">
+                            <span class="kite-index-name">BANK </span>
+                            <span class="kite-index-value">59,011 ↑</span>
+                        </div>
+                    </div>
+
+                    <div class="stock-row">
+                        <div>
+                            <div class="stock-symbol">RELIANCE</div>
+                            <div class="stock-name">NSE</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="stock-price">2,485.60</div>
+                            <div class="stock-change">+1.2%</div>
+                        </div>
+                    </div>
+                    <div class="stock-row">
+                        <div>
+                            <div class="stock-symbol">TCS</div>
+                            <div class="stock-name">NSE</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="stock-price negative">4,125.30</div>
+                            <div class="stock-change negative">-0.5%</div>
+                        </div>
+                    </div>
+                    <div class="stock-row">
+                        <div>
+                            <div class="stock-symbol">INFY</div>
+                            <div class="stock-name">NSE</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="stock-price">1,892.45</div>
+                            <div class="stock-change">+0.8%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="option-analysis">
+                <div class="analysis-row">
+                    <span class="analysis-label">Taps to see stocks</span>
+                    <span class="analysis-value good">1 tap</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">List management</span>
+                    <span class="analysis-value bad">Hidden</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Quick switching</span>
+                    <span class="analysis-value good">Excellent</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Best for</span>
+                    <span class="analysis-value">Speed traders</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option 6: Bottom Sheet Picker -->
+        <div class="option-card">
+            <div class="option-header">
+                <span class="option-badge badge-coinbase">Coinbase</span>
+                <span class="option-title">Bottom Sheet Picker</span>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-screen" style="position:relative; height: 480px;">
+                    <div class="bs-header">
+                        <div class="bs-list-selector">
+                            <span class="bs-list-name">MACD Bullish</span>
+                            <span class="bs-dropdown-icon">▼</span>
+                        </div>
+                        <div style="color:white">+</div>
+                    </div>
+
+                    <div class="stock-row">
+                        <div>
+                            <div class="stock-symbol">GPPL</div>
+                            <div class="stock-name">Gujarat Pipavav</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="stock-price negative">183.02</div>
+                            <div class="stock-change negative">-4.68%</div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Sheet -->
+                    <div class="bs-sheet">
+                        <div class="bs-sheet-handle"></div>
+                        <div class="bs-sheet-title">Switch List</div>
+                        
+                        <div class="bs-sheet-item">
+                            <div class="bs-sheet-dot" style="background:#3B82F6"></div>
+                            <span class="bs-sheet-item-name">MACD Bullish</span>
+                            <span class="bs-sheet-item-count">9</span>
+                        </div>
+                        <div class="bs-sheet-item">
+                            <div class="bs-sheet-dot" style="background:#F59E0B"></div>
+                            <span class="bs-sheet-item-name">Vol + RSI Screener</span>
+                            <span class="bs-sheet-item-count">12</span>
+                        </div>
+                        <div class="bs-sheet-item">
+                            <div class="bs-sheet-dot" style="background:#8B5CF6"></div>
+                            <span class="bs-sheet-item-name">Healthcare</span>
+                            <span class="bs-sheet-item-count">45</span>
+                        </div>
+                        <div class="bs-sheet-item">
+                            <div class="bs-sheet-dot" style="background:#6B7280"></div>
+                            <span class="bs-sheet-item-name">Recent</span>
+                            <span class="bs-sheet-item-count">10</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="option-analysis">
+                <div class="analysis-row">
+                    <span class="analysis-label">Taps to see stocks</span>
+                    <span class="analysis-value medium">2 taps</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">List management</span>
+                    <span class="analysis-value good">Good</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Quick switching</span>
+                    <span class="analysis-value medium">Medium</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Best for</span>
+                    <span class="analysis-value">Clean UI focus</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">New Patterns</div>
+
+    <div class="options-grid">
+        <!-- Option 7: Search First -->
+        <div class="option-card">
+            <div class="option-header">
+                <span class="option-badge badge-new">New</span>
+                <span class="option-title">Search-First</span>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div style="background:#000; padding:16px;">
+                        <div style="font-size:22px; font-weight:700; color:white;">Watchlists</div>
+                    </div>
+                    
+                    <div class="sf-search-bar">
+                        <span class="sf-search-icon">🔍</span>
+                        <span class="sf-search-placeholder">Search stocks or lists...</span>
+                    </div>
+
+                    <div class="sf-quick-access">
+                        <div class="sf-quick-title">QUICK ACCESS</div>
+                        <div class="sf-quick-chips">
+                            <div class="sf-chip">
+                                <div class="sf-chip-dot" style="background:#6B7280"></div>
+                                Recent
+                            </div>
+                            <div class="sf-chip">
+                                <div class="sf-chip-dot" style="background:#3B82F6"></div>
+                                MACD
+                            </div>
+                            <div class="sf-chip">
+                                <div class="sf-chip-dot" style="background:#F59E0B"></div>
+                                Vol+RSI
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sf-quick-access">
+                        <div class="sf-quick-title">MY LISTS</div>
+                        <div class="stock-row" style="background:#111; margin:0 -16px; padding:14px 16px;">
+                            <div>
+                                <div class="stock-symbol">📁 MACD Bullish</div>
+                                <div class="stock-name">9 stocks</div>
+                            </div>
+                            <span style="color:#666">›</span>
+                        </div>
+                    </div>
+
+                    <div class="sf-quick-access">
+                        <div class="sf-quick-title">SCREENERS</div>
+                        <div class="stock-row" style="background:#111; margin:0 -16px; padding:14px 16px;">
+                            <div>
+                                <div class="stock-symbol">⚡ Volume + RSI</div>
+                                <div class="stock-name">Auto-updating · 12 stocks</div>
+                            </div>
+                            <span style="color:#666">›</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="option-analysis">
+                <div class="analysis-row">
+                    <span class="analysis-label">Taps to see stocks</span>
+                    <span class="analysis-value medium">2 taps</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">List management</span>
+                    <span class="analysis-value good">Excellent</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Discovery</span>
+                    <span class="analysis-value good">Excellent</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Best for</span>
+                    <span class="analysis-value">Power users</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option 8: Folder Grid -->
+        <div class="option-card">
+            <div class="option-header">
+                <span class="option-badge badge-new">New</span>
+                <span class="option-title">Folder Grid (iOS Style)</span>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="fg-header">
+                        <div class="fg-title">Watchlists</div>
+                        <div class="fg-subtitle">4 categories · 28 lists</div>
+                    </div>
+                    
+                    <div class="fg-grid">
+                        <div class="fg-folder">
+                            <div class="fg-folder-icon fg-icon-list">📋</div>
+                            <div class="fg-folder-name">My Lists</div>
+                            <div class="fg-folder-count">5 lists</div>
+                        </div>
+                        <div class="fg-folder">
+                            <div class="fg-folder-icon fg-icon-screener">⚡</div>
+                            <div class="fg-folder-name">Screeners</div>
+                            <div class="fg-folder-count">3 screeners</div>
+                        </div>
+                        <div class="fg-folder">
+                            <div class="fg-folder-icon fg-icon-preset">🏷️</div>
+                            <div class="fg-folder-name">Discover</div>
+                            <div class="fg-folder-count">15 presets</div>
+                        </div>
+                        <div class="fg-folder">
+                            <div class="fg-folder-icon fg-icon-recent">🕐</div>
+                            <div class="fg-folder-name">Recent</div>
+                            <div class="fg-folder-count">10 stocks</div>
+                        </div>
+                    </div>
+
+                    <div style="padding:0 16px 16px;">
+                        <div style="font-size:12px; font-weight:600; color:#666; margin-bottom:12px;">PINNED</div>
+                        <div class="stock-row" style="background:#1a1a1a; border-radius:12px; border:none;">
+                            <div>
+                                <div class="stock-symbol">⭐ Favorites</div>
+                                <div class="stock-name">Quick access</div>
+                            </div>
+                            <span style="color:#666">›</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="option-analysis">
+                <div class="analysis-row">
+                    <span class="analysis-label">Taps to see stocks</span>
+                    <span class="analysis-value bad">3 taps</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Organization</span>
+                    <span class="analysis-value good">Excellent</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Scalability</span>
+                    <span class="analysis-value good">Excellent</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Best for</span>
+                    <span class="analysis-value">Many categories</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option 9: Hybrid (Recommended) -->
+        <div class="option-card">
+            <div class="option-header">
+                <span class="option-badge badge-hybrid">★ Recommended</span>
+                <span class="option-title">Hybrid Approach</span>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="hybrid-header">
+                        <div class="hybrid-top-row">
+                            <span class="hybrid-title">Watchlists</span>
+                            <span style="color:white">+</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Type filter pills -->
+                    <div class="hybrid-type-pills">
+                        <div class="hybrid-pill active">
+                            <span class="hybrid-pill-icon">✨</span>
+                            All
+                        </div>
+                        <div class="hybrid-pill">
+                            <span class="hybrid-pill-icon">📋</span>
+                            Lists
+                        </div>
+                        <div class="hybrid-pill">
+                            <span class="hybrid-pill-icon">⚡</span>
+                            Screeners
+                        </div>
+                        <div class="hybrid-pill">
+                            <span class="hybrid-pill-icon">🏷️</span>
+                            Preset
+                        </div>
+                    </div>
+
+                    <!-- Individual list tabs -->
+                    <div class="hybrid-list-tabs">
+                        <div class="hybrid-list-tab">🕐 Recent</div>
+                        <div class="hybrid-list-tab active">MACD Bullish</div>
+                        <div class="hybrid-list-tab">Vol+RSI ⚡</div>
+                        <div class="hybrid-list-tab">Healthcare 🏷️</div>
+                    </div>
+
+                    <div class="stock-row">
+                        <div>
+                            <div class="stock-symbol">GPPL</div>
+                            <div class="stock-name">Gujarat Pipavav</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="stock-price negative">183.02</div>
+                            <div class="stock-change negative">-4.68%</div>
+                        </div>
+                    </div>
+                    <div class="stock-row">
+                        <div>
+                            <div class="stock-symbol">RECLTD</div>
+                            <div class="stock-name">REC Limited</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="stock-price">357.10</div>
+                            <div class="stock-change">+0.66%</div>
+                        </div>
+                    </div>
+                    <div class="stock-row">
+                        <div>
+                            <div class="stock-symbol">PETRONET</div>
+                            <div class="stock-name">Petronet LNG</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="stock-price">281.70</div>
+                            <div class="stock-change">+0.23%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="option-analysis">
+                <div class="analysis-row">
+                    <span class="analysis-label">Taps to see stocks</span>
+                    <span class="analysis-value good">1 tap</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Filter by type</span>
+                    <span class="analysis-value good">Yes</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Quick switching</span>
+                    <span class="analysis-value good">Excellent</span>
+                </div>
+                <div class="analysis-row">
+                    <span class="analysis-label">Best for</span>
+                    <span class="analysis-value">Balance of all</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="comparison-section">
+        <div class="comparison-title">Complete Comparison</div>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Pattern</th>
+                    <th>Taps to Stocks</th>
+                    <th>Quick Switch</th>
+                    <th>Type Filter</th>
+                    <th>Scalability</th>
+                    <th>Best Use Case</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Robinhood (Lists Screen)</td>
+                    <td class="medium">2</td>
+                    <td class="cross">✗ Poor</td>
+                    <td class="check">✓ Sections</td>
+                    <td class="check">✓ Great</td>
+                    <td>Many lists to manage</td>
+                </tr>
+                <tr>
+                    <td>Zerodha (Number Tabs)</td>
+                    <td class="good">1</td>
+                    <td class="check">✓ Best</td>
+                    <td class="cross">✗ No</td>
+                    <td class="cross">✗ Limited</td>
+                    <td>Speed traders</td>
+                </tr>
+                <tr>
+                    <td>Bottom Sheet Picker</td>
+                    <td class="medium">2</td>
+                    <td class="medium">○ Medium</td>
+                    <td class="check">✓ Visual</td>
+                    <td class="check">✓ Good</td>
+                    <td>Clean minimal UI</td>
+                </tr>
+                <tr>
+                    <td>Search-First</td>
+                    <td class="medium">2</td>
+                    <td class="medium">○ Medium</td>
+                    <td class="check">✓ Search</td>
+                    <td class="check">✓ Best</td>
+                    <td>Power users</td>
+                </tr>
+                <tr>
+                    <td>Folder Grid</td>
+                    <td class="cross">3</td>
+                    <td class="cross">✗ Poor</td>
+                    <td class="check">✓ Explicit</td>
+                    <td class="check">✓ Best</td>
+                    <td>Large catalog</td>
+                </tr>
+                <tr>
+                    <td><strong>Hybrid</strong> <span class="rec-badge">★ REC</span></td>
+                    <td class="good"><strong>1</strong></td>
+                    <td class="check"><strong>✓ Great</strong></td>
+                    <td class="check"><strong>✓ Pills</strong></td>
+                    <td class="check"><strong>✓ Good</strong></td>
+                    <td><strong>Best balance</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

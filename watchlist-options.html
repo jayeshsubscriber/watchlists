@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Watchlist UX Options</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .option-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #5C2D4E 0%, #7B3F6B 100%);
+            color: white;
+        }
+
+        .option-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .option-badge.recommended {
+            background: #22C55E;
+        }
+
+        .option-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .option-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .phone-frame {
+            background: #f8f8f8;
+            padding: 16px;
+        }
+
+        .phone-screen {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 375px;
+            margin: 0 auto;
+        }
+
+        /* Option 1 Styles - Segmented Control */
+        .segment-control {
+            display: flex;
+            background: #f0f0f0;
+            margin: 12px;
+            border-radius: 10px;
+            padding: 3px;
+        }
+
+        .segment-btn {
+            flex: 1;
+            padding: 10px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .segment-btn.active {
+            background: white;
+            color: #5C2D4E;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Option 2 Styles - Unified with Icons */
+        .unified-tabs {
+            display: flex;
+            overflow-x: auto;
+            padding: 12px;
+            gap: 8px;
+            scrollbar-width: none;
+        }
+
+        .unified-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .unified-tab {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .unified-tab.active {
+            background: #5C2D4E;
+            color: white;
+        }
+
+        .unified-tab .tab-icon {
+            font-size: 14px;
+        }
+
+        .tab-type-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-left: 4px;
+        }
+
+        .dot-list { background: #3B82F6; }
+        .dot-screener { background: #F59E0B; }
+        .dot-preset { background: #8B5CF6; }
+        .dot-recent { background: #6B7280; }
+
+        /* Option 3 Styles - Two-tier */
+        .tier-toggle {
+            display: flex;
+            background: #5C2D4E;
+            padding: 12px 16px;
+            gap: 8px;
+        }
+
+        .tier-btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tier-btn.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .sub-tabs {
+            display: flex;
+            overflow-x: auto;
+            padding: 12px 16px;
+            gap: 16px;
+            background: #5C2D4E;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sub-tab {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+            padding-bottom: 8px;
+            position: relative;
+        }
+
+        .sub-tab.active {
+            color: white;
+        }
+
+        .sub-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        /* Common Styles */
+        .header-bar {
+            background: #5C2D4E;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-icon {
+            color: white;
+            opacity: 0.9;
+        }
+
+        .stock-list {
+            padding: 0;
+        }
+
+        .stock-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stock-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stock-symbol {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .stock-name {
+            font-size: 11px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .stock-price {
+            text-align: right;
+        }
+
+        .price-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #22A06B;
+        }
+
+        .price-change {
+            font-size: 11px;
+            color: #22A06B;
+        }
+
+        .price-value.negative { color: #E54D42; }
+        .price-change.negative { color: #E54D42; }
+
+        /* Pros/Cons */
+        .option-analysis {
+            padding: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .analysis-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .pros, .cons {
+            font-size: 12px;
+        }
+
+        .pros h4, .cons h4 {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pros h4 { color: #22A06B; }
+        .cons h4 { color: #E54D42; }
+
+        .pros ul, .cons ul {
+            list-style: none;
+            color: #666;
+        }
+
+        .pros li, .cons li {
+            margin-bottom: 4px;
+            padding-left: 12px;
+            position: relative;
+        }
+
+        .pros li::before {
+            content: '+';
+            position: absolute;
+            left: 0;
+            color: #22A06B;
+            font-weight: 600;
+        }
+
+        .cons li::before {
+            content: '−';
+            position: absolute;
+            left: 0;
+            color: #E54D42;
+            font-weight: 600;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: #f8f8f8;
+            border-radius: 12px;
+            margin: 12px 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Category Section */
+        .category-section {
+            padding: 16px;
+        }
+
+        .category-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .category-card {
+            padding: 12px;
+            background: #f8f8f8;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .category-info {
+            flex: 1;
+        }
+
+        .category-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .category-count {
+            font-size: 11px;
+            color: #888;
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            max-width: 1200px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .comparison-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .comparison-table th {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            background: #f8f8f8;
+        }
+
+        .comparison-table td {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .check { color: #22A06B; }
+        .cross { color: #E54D42; }
+
+        /* Screener indicator */
+        .screener-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #FEF3C7;
+            color: #92400E;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .auto-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #DBEAFE;
+            color: #1E40AF;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .follow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #EDE9FE;
+            color: #5B21B6;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>Watchlist UX Options</h1>
+        <p>3 approaches for organizing Lists, Screeners, Preset Lists & Recent</p>
+    </div>
+
+    <div class="options-grid">
+        <!-- Option 1: Segmented Control -->
+        <div class="option-card">
+            <div class="option-header">
+                <div class="option-badge">Option 1</div>
+                <div class="option-title">Segmented Control</div>
+                <div class="option-subtitle">4 clear categories with segment tabs</div>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="header-bar">
+                        <span class="header-title">Watchlists</span>
+                        <span class="header-icon">⚙️</span>
+                    </div>
+                    
+                    <div class="segment-control">
+                        <button class="segment-btn active">My Lists</button>
+                        <button class="segment-btn">Screeners</button>
+                        <button class="segment-btn">Discover</button>
+                        <button class="segment-btn">Recent</button>
+                    </div>
+
+                    <div class="stock-list">
+                        <div class="stock-row">
+                            <div class="stock-info">
+                                <span class="stock-symbol">MACD Bullish</span>
+                                <span class="stock-name">9 stocks · Updated just now</span>
+                            </div>
+                            <span style="color:#888">→</span>
+                        </div>
+                        <div class="stock-row">
+                            <div class="stock-info">
+                                <span class="stock-symbol">High Volume</span>
+                                <span class="stock-name">12 stocks · Updated 5m ago</span>
+                            </div>
+                            <span style="color:#888">→</span>
+                        </div>
+                        <div class="stock-row">
+                            <div class="stock-info">
+                                <span class="stock-symbol">Breakout Candidates</span>
+                                <span class="stock-name">5 stocks · Updated 10m ago</span>
+                            </div>
+                            <span style="color:#888">→</span>
+                        </div>
+                        <div class="stock-row" style="background:#f8f8f8; border:2px dashed #ddd; margin:12px; border-radius:12px; justify-content:center">
+                            <span style="color:#888; font-size:14px">+ Create New List</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="option-analysis">
+                <div class="analysis-title">Analysis</div>
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✓ Pros</h4>
+                        <ul>
+                            <li>Clear mental model</li>
+                            <li>Easy to find type</li>
+                            <li>Scalable categories</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>✗ Cons</h4>
+                        <ul>
+                            <li>Extra tap to switch</li>
+                            <li>Can't see all at once</li>
+                            <li>Less efficient</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option 2: Unified with Visual Indicators -->
+        <div class="option-card">
+            <div class="option-header">
+                <div class="option-badge recommended">★ Recommended</div>
+                <div class="option-title">Unified + Visual Cues</div>
+                <div class="option-subtitle">All lists together with type indicators</div>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="header-bar">
+                        <span class="header-title">My Watchlists</span>
+                        <span class="header-icon">+</span>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-dot dot-list"></div>
+                            My Lists
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot dot-screener"></div>
+                            Screeners
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot dot-preset"></div>
+                            Preset
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot dot-recent"></div>
+                            Recent
+                        </div>
+                    </div>
+                    
+                    <div class="unified-tabs">
+                        <div class="unified-tab">
+                            <span class="tab-icon">🕐</span>Recent
+                        </div>
+                        <div class="unified-tab active">
+                            MACD Bullish
+                            <span class="tab-type-dot dot-list"></span>
+                        </div>
+                        <div class="unified-tab">
+                            Vol+RSI
+                            <span class="tab-type-dot dot-screener"></span>
+                        </div>
+                        <div class="unified-tab">
+                            IPOs
+                            <span class="tab-type-dot dot-preset"></span>
+                        </div>
+                    </div>
+
+                    <div class="stock-list">
+                        <div class="stock-row">
+                            <div class="stock-info">
+                                <span class="stock-symbol">GPPL</span>
+                                <span class="stock-name">Gujarat Pipavav Port</span>
+                            </div>
+                            <div class="stock-price">
+                                <div class="price-value negative">183.02</div>
+                                <div class="price-change negative">-4.68%</div>
+                            </div>
+                        </div>
+                        <div class="stock-row">
+                            <div class="stock-info">
+                                <span class="stock-symbol">RECLTD</span>
+                                <span class="stock-name">REC Limited</span>
+                            </div>
+                            <div class="stock-price">
+                                <div class="price-value">357.10</div>
+                                <div class="price-change">+0.66%</div>
+                            </div>
+                        </div>
+                        <div class="stock-row">
+                            <div class="stock-info">
+                                <span class="stock-symbol">PETRONET</span>
+                                <span class="stock-name">Petronet LNG</span>
+                            </div>
+                            <div class="stock-price">
+                                <div class="price-value">281.70</div>
+                                <div class="price-change">+0.23%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="option-analysis">
+                <div class="analysis-title">Analysis</div>
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✓ Pros</h4>
+                        <ul>
+                            <li>Single tap switching</li>
+                            <li>All visible together</li>
+                            <li>Familiar pattern</li>
+                            <li>Color-coded types</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>✗ Cons</h4>
+                        <ul>
+                            <li>Can get crowded</li>
+                            <li>Learning curve for colors</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option 3: Two-Tier Navigation -->
+        <div class="option-card">
+            <div class="option-header">
+                <div class="option-badge">Option 3</div>
+                <div class="option-title">Two-Tier Navigation</div>
+                <div class="option-subtitle">"Personal" vs "Discover" with sub-tabs</div>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="tier-toggle">
+                        <button class="tier-btn active">👤 Personal</button>
+                        <button class="tier-btn">🔍 Discover</button>
+                    </div>
+                    
+                    <div class="sub-tabs">
+                        <div class="sub-tab active">My Lists (3)</div>
+                        <div class="sub-tab">Screeners (2)</div>
+                        <div class="sub-tab">Recent</div>
+                    </div>
+
+                    <div class="stock-list">
+                        <div class="stock-row">
+                            <div class="stock-info">
+                                <span class="stock-symbol">MACD Bullish</span>
+                                <span class="stock-name">9 stocks</span>
+                            </div>
+                            <span style="color:#888">→</span>
+                        </div>
+                        <div class="stock-row">
+                            <div class="stock-info">
+                                <span class="stock-symbol">High Volume</span>
+                                <span class="stock-name">12 stocks</span>
+                            </div>
+                            <span style="color:#888">→</span>
+                        </div>
+                        <div class="stock-row">
+                            <div class="stock-info">
+                                <span class="stock-symbol">Breakout</span>
+                                <span class="stock-name">5 stocks</span>
+                            </div>
+                            <span style="color:#888">→</span>
+                        </div>
+                    </div>
+
+                    <div style="padding:16px; font-size:11px; color:#888; text-align:center; border-top:1px solid #f0f0f0">
+                        Switch to "Discover" for Preset Lists →
+                    </div>
+                </div>
+            </div>
+            <div class="option-analysis">
+                <div class="analysis-title">Analysis</div>
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✓ Pros</h4>
+                        <ul>
+                            <li>Clean separation</li>
+                            <li>Own vs Browse clear</li>
+                            <li>Room for growth</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>✗ Cons</h4>
+                        <ul>
+                            <li>2 levels = more taps</li>
+                            <li>Discover hidden</li>
+                            <li>Complex hierarchy</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="comparison-section">
+        <div class="comparison-title">Quick Comparison</div>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Criteria</th>
+                    <th>Option 1: Segments</th>
+                    <th>Option 2: Unified ⭐</th>
+                    <th>Option 3: Two-Tier</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Taps to switch list</td>
+                    <td>2 taps</td>
+                    <td><strong>1 tap</strong></td>
+                    <td>2-3 taps</td>
+                </tr>
+                <tr>
+                    <td>See all types at once</td>
+                    <td class="cross">✗ No</td>
+                    <td class="check">✓ Yes</td>
+                    <td class="cross">✗ No</td>
+                </tr>
+                <tr>
+                    <td>Scalability (many lists)</td>
+                    <td class="check">✓ Good</td>
+                    <td>Medium</td>
+                    <td class="check">✓ Good</td>
+                </tr>
+                <tr>
+                    <td>Learning curve</td>
+                    <td class="check">✓ Low</td>
+                    <td>Medium</td>
+                    <td class="cross">✗ High</td>
+                </tr>
+                <tr>
+                    <td>Works with swipe</td>
+                    <td class="cross">✗ No</td>
+                    <td class="check">✓ Yes</td>
+                    <td class="cross">✗ Partial</td>
+                </tr>
+                <tr>
+                    <td>Type differentiation</td>
+                    <td class="check">✓ Explicit</td>
+                    <td class="check">✓ Visual</td>
+                    <td class="check">✓ Grouped</td>
+                </tr>
+                <tr>
+                    <td><strong>Recommendation</strong></td>
+                    <td>For power users</td>
+                    <td><strong>Best overall</strong></td>
+                    <td>For many presets</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

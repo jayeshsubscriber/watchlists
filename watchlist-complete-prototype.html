@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Watchlist - Complete Interactive Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Upstox Design System Variables */
+        :root {
+            --bg-default: #FFFFFF;
+            --bg-ui-1: #F2F2F2;
+            --bg-ui-3: #E1E1E1;
+            --bg-ui-4: #D0D0D0;
+            --bg-primary: #5A298B;
+            --bg-tan: #EEEBE6;
+            --bg-gold: #A09568;
+            --text-1: #262626;
+            --text-2: #6A6A6A;
+            --text-3: #FFFFFF;
+            --text-alt: #929292;
+            --positive: #148564;
+            --negative: #DB542A;
+            --padding-h: 16px;
+            --row-height: 56px;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: #1a1a2e;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Layout for multiple screens */
+        .screens-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+        }
+
+        .screen-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .screen-label {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .phone-container {
+            width: 360px;
+            height: 780px;
+            background: var(--bg-default);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 8px solid #1a1a1a;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            background: var(--bg-default);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .status-bar.dark {
+            background: var(--bg-primary);
+        }
+
+        .status-time {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-1);
+        }
+
+        .status-bar.dark .status-time {
+            color: var(--text-3);
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .status-icons svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-1);
+        }
+
+        .status-bar.dark .status-icons svg {
+            fill: var(--text-3);
+        }
+
+        .notch {
+            width: 80px;
+            height: 24px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-default);
+            padding: 8px var(--padding-h);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--bg-ui-3);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-back {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .header-back svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-1);
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-1);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .header-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-2);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            margin: 8px var(--padding-h);
+            background: var(--bg-ui-1);
+            border-radius: 8px;
+            border: 1px solid var(--bg-ui-3);
+        }
+
+        .search-bar svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-2);
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            color: var(--text-1);
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-2);
+        }
+
+        /* Index Ticker */
+        .index-ticker {
+            display: flex;
+            padding: 8px var(--padding-h);
+            gap: 16px;
+            border-bottom: 1px solid var(--bg-ui-3);
+        }
+
+        .index-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .index-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-2);
+        }
+
+        .index-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            border-bottom: 1px solid var(--bg-ui-3);
+        }
+
+        .tabs {
+            display: flex;
+            padding: 0 var(--padding-h);
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 12px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-2);
+            white-space: nowrap;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            color: var(--bg-primary);
+            font-weight: 600;
+            border-bottom-color: var(--bg-primary);
+        }
+
+        .tab-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px var(--padding-h) 12px 8px;
+            margin-left: auto;
+        }
+
+        .tab-action-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .tab-action-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-2);
+        }
+
+        /* Description */
+        .list-description {
+            padding: 8px var(--padding-h);
+            font-size: 12px;
+            color: var(--text-2);
+            background: var(--bg-ui-1);
+            border-bottom: 1px solid var(--bg-ui-3);
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--bg-default);
+        }
+
+        /* Stock Row */
+        .stock-row {
+            display: flex;
+            align-items: center;
+            height: var(--row-height);
+            padding: 0 var(--padding-h);
+            background: var(--bg-default);
+            border-bottom: 1px solid var(--bg-ui-1);
+            cursor: pointer;
+        }
+
+        .stock-row:active {
+            background: var(--bg-ui-1);
+        }
+
+        .stock-left {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stock-symbol {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 20px;
+            color: var(--text-1);
+            text-transform: uppercase;
+        }
+
+        .stock-meta {
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 16px;
+            color: var(--text-2);
+        }
+
+        .stock-right {
+            text-align: right;
+            min-width: 70px;
+        }
+
+        .stock-price {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 20px;
+            font-feature-settings: 'tnum' on, 'lnum' on;
+        }
+
+        .positive { color: var(--positive); }
+        .negative { color: var(--negative); }
+
+        /* 3-Column Layout */
+        .stock-row.three-col {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 8px var(--padding-h);
+            gap: 4px;
+        }
+
+        .stock-row.three-col .stock-left {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .stock-row.three-col .stock-symbol {
+            font-family: 'Messina Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+            color: var(--text-1);
+            text-transform: uppercase;
+        }
+
+        .stock-row.three-col .stock-meta {
+            font-family: 'Messina Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: #6A6A6A;
+        }
+
+        .stock-row.three-col .stock-middle {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+            width: 100px;
+        }
+
+        .stock-row.three-col .stock-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+            width: 100px;
+        }
+
+        .stock-middle-value {
+            font-family: 'Messina Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            line-height: 16px;
+            text-align: right;
+        }
+
+        .stock-middle-value.positive {
+            color: #148564;
+        }
+
+        .stock-middle-value.negative {
+            color: #DB542A;
+        }
+
+        .stock-middle-sub {
+            font-family: 'Messina Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            text-align: right;
+            color: #262626;
+        }
+
+        /* Column Header */
+        .column-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 8px var(--padding-h) 4px;
+            gap: 4px;
+            background: #FFFFFF;
+        }
+
+        .column-header span {
+            font-family: 'Messina Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 16px;
+            color: #6A6A6A;
+        }
+
+        .column-header span:first-child {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .column-header span:not(:first-child) {
+            width: 100px;
+            text-align: right;
+        }
+
+        .column-header span:not(:first-child) {
+            text-align: right;
+        }
+
+        /* Category Chips */
+        .category-chips {
+            display: flex;
+            gap: 8px;
+            padding: 12px var(--padding-h);
+            overflow-x: auto;
+            background: var(--bg-default);
+            border-bottom: 1px solid var(--bg-ui-3);
+        }
+
+        .category-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip {
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-2);
+            background: var(--bg-default);
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1px solid var(--bg-ui-4);
+            transition: all 0.2s ease;
+        }
+
+        .chip.active {
+            background: var(--text-1);
+            color: var(--text-3);
+            border-color: var(--text-1);
+        }
+
+        /* Section Title */
+        .section-title {
+            padding: 16px var(--padding-h) 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-2);
+        }
+
+        /* List Item (Discover) */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px var(--padding-h);
+            border-bottom: 1px solid var(--bg-ui-1);
+            cursor: pointer;
+        }
+
+        .list-item:active {
+            background: var(--bg-ui-1);
+        }
+
+        .list-item-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .list-item-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-2);
+        }
+
+        .list-item-text {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-1);
+        }
+
+        /* Follow Button */
+        .follow-btn {
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--text-1);
+            background: var(--bg-default);
+            color: var(--text-1);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .follow-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .follow-btn.following {
+            background: var(--text-1);
+            color: var(--text-3);
+        }
+
+        /* Filter Tag */
+        .filter-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px var(--padding-h);
+            font-size: 12px;
+            color: var(--text-2);
+            background: var(--bg-ui-1);
+            border-bottom: 1px solid var(--bg-ui-3);
+        }
+
+        .filter-tag svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--text-2);
+        }
+
+        /* Bottom Sheet */
+        .bottom-sheet-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .bottom-sheet-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-default);
+            border-radius: 16px 16px 0 0;
+            padding: 16px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 101;
+        }
+
+        .bottom-sheet.active {
+            transform: translateY(0);
+        }
+
+        .bottom-sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--bg-ui-4);
+            border-radius: 2px;
+            margin: 0 auto 16px;
+        }
+
+        .bottom-sheet-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: 16px;
+        }
+
+        .bottom-sheet-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--bg-ui-1);
+            cursor: pointer;
+        }
+
+        .bottom-sheet-option:last-child {
+            border-bottom: none;
+        }
+
+        .bottom-sheet-option-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(90, 41, 139, 0.1);
+        }
+
+        .bottom-sheet-option-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--bg-primary);
+        }
+
+        .bottom-sheet-option-text {
+            flex: 1;
+        }
+
+        .bottom-sheet-option-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-1);
+        }
+
+        .bottom-sheet-option-desc {
+            font-size: 12px;
+            color: var(--text-2);
+        }
+
+        /* Detail Header */
+        .detail-header {
+            padding: var(--padding-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--bg-ui-3);
+        }
+
+        .detail-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: 4px;
+        }
+
+        .detail-subtitle {
+            font-size: 12px;
+            color: var(--text-2);
+        }
+
+        /* Home Indicator */
+        .home-indicator {
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-default);
+        }
+
+        .home-indicator-bar {
+            width: 134px;
+            height: 5px;
+            background: var(--text-1);
+            border-radius: 3px;
+        }
+
+        /* Transitions for navigation */
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Arrow icon for list items */
+        .list-item-arrow {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .list-item-arrow svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-2);
+        }
+    </style>
+</head>
+<body>
+    <div class="screens-container">
+        <!-- Screen 1: Main Watchlist with Bottom Sheet -->
+        <div class="screen-wrapper">
+            <div class="screen-label">1. Main + Create Sheet</div>
+            <div class="phone-container" id="phone-1">
+                <div class="notch"></div>
+                <div class="screen active" id="screen-main-1">
+                    <div class="status-bar">
+                        <span class="status-time">9:41</span>
+                        <div class="status-icons">
+                            <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M2 22h20V2z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="search-bar">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        <input type="text" placeholder="Search">
+                        <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+
+                    <div class="index-ticker">
+                        <div class="index-item">
+                            <span class="index-name">Nifty</span>
+                            <span class="index-value"></span>
+                        </div>
+                        <div class="index-item">
+                            <span class="index-name">BankNifty</span>
+                            <span class="index-value"></span>
+                        </div>
+                    </div>
+
+                    <div class="tabs-container">
+                        <div class="tabs">
+                            <div class="tab active">My First List</div>
+                            <div class="tab" style="color: var(--bg-primary);">IPO Access</div>
+                            <div class="tab-actions">
+                                <div class="tab-action-btn" onclick="openSheet(1)">
+                                    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="var(--bg-primary)"/></svg>
+                                </div>
+                                <div class="tab-action-btn">
+                                    <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="content-area">
+                        <div class="stock-row">
+                            <div class="stock-left">
+                                <div class="stock-symbol">Reliance</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,500</div>
+                            </div>
+                        </div>
+                        <div class="stock-row">
+                            <div class="stock-left">
+                                <div class="stock-symbol">HDFC Bank</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,000</div>
+                            </div>
+                        </div>
+                        <div class="stock-row">
+                            <div class="stock-left">
+                                <div class="stock-symbol">HDFC Bank</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,000</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="home-indicator">
+                        <div class="home-indicator-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Bottom Sheet -->
+                <div class="bottom-sheet-overlay" id="overlay-1" onclick="closeSheet(1)"></div>
+                <div class="bottom-sheet active" id="sheet-1">
+                    <div class="bottom-sheet-handle"></div>
+                    <div class="bottom-sheet-title">Create a new list</div>
+                    
+                    <div class="bottom-sheet-option">
+                        <div class="bottom-sheet-option-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                        </div>
+                        <div class="bottom-sheet-option-text">
+                            <div class="bottom-sheet-option-title">Create New Watchlist</div>
+                        </div>
+                    </div>
+
+                    <div class="bottom-sheet-option">
+                        <div class="bottom-sheet-option-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        </div>
+                        <div class="bottom-sheet-option-text">
+                            <div class="bottom-sheet-option-title">Discover Lists to Follow</div>
+                        </div>
+                    </div>
+
+                    <div class="bottom-sheet-option">
+                        <div class="bottom-sheet-option-icon">
+                            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                        </div>
+                        <div class="bottom-sheet-option-text">
+                            <div class="bottom-sheet-option-title">Create screeners</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 2: Discover Lists -->
+        <div class="screen-wrapper">
+            <div class="screen-label">2. Discover Lists</div>
+            <div class="phone-container" id="phone-2">
+                <div class="notch"></div>
+                <div class="screen active">
+                    <div class="status-bar">
+                        <span class="status-time">9:41</span>
+                        <div class="status-icons">
+                            <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M2 22h20V2z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="header">
+                        <div class="header-left">
+                            <div class="header-back">
+                                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                            </div>
+                            <span class="header-title">Discover Lists</span>
+                        </div>
+                    </div>
+
+                    <div class="category-chips">
+                        <div class="chip active">Options</div>
+                        <div class="chip">Technical</div>
+                        <div class="chip">Fundamentals</div>
+                        <div class="chip">Intraday</div>
+                        <div class="chip">Investments</div>
+                    </div>
+
+                    <div class="content-area">
+                        <div class="section-title">Options list</div>
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            </div>
+                            <span class="list-item-text">Highest IV</span>
+                            <div class="list-item-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            </div>
+                            <span class="list-item-text">Highest Options Volume</span>
+                            <div class="list-item-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            </div>
+                            <span class="list-item-text">Highest OI</span>
+                            <div class="list-item-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            </div>
+                            <span class="list-item-text">Highest OI Change</span>
+                            <div class="list-item-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+
+                        <div class="section-title">Technicals</div>
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            </div>
+                            <span class="list-item-text">Gap-up</span>
+                            <div class="list-item-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            </div>
+                            <span class="list-item-text">Gap-down</span>
+                            <div class="list-item-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            </div>
+                            <span class="list-item-text">New 52W High</span>
+                            <div class="list-item-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            </div>
+                            <span class="list-item-text">New 52W Low</span>
+                            <div class="list-item-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            </div>
+                            <span class="list-item-text">MACD Bullish Cross</span>
+                            <div class="list-item-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="home-indicator">
+                        <div class="home-indicator-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 3: Highest IV Detail -->
+        <div class="screen-wrapper">
+            <div class="screen-label">3. Highest IV</div>
+            <div class="phone-container" id="phone-3">
+                <div class="notch"></div>
+                <div class="screen active">
+                    <div class="status-bar">
+                        <span class="status-time">9:41</span>
+                        <div class="status-icons">
+                            <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M2 22h20V2z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="detail-header">
+                        <div>
+                            <div class="detail-title">Highest IV</div>
+                        </div>
+                        <button class="follow-btn" onclick="toggleFollow(this)">
+                            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                            Follow
+                        </button>
+                    </div>
+
+                    <div class="filter-tag">
+                        <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+                        <span>Nifty, Call Options</span>
+                    </div>
+
+                    <div class="column-header">
+                        <span>Scrip</span>
+                        <span>IV</span>
+                        <span>Price</span>
+                    </div>
+
+                    <div class="content-area">
+                        <div class="stock-row three-col">
+                            <div class="stock-left">
+                                <div class="stock-symbol">Nifty 25000 CE</div>
+                                <div class="stock-meta">31 Dec 2025</div>
+                            </div>
+                            <div class="stock-middle">
+                                <div class="stock-middle-value">25%</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,49</div>
+                            </div>
+                        </div>
+                        <div class="stock-row three-col">
+                            <div class="stock-left">
+                                <div class="stock-symbol">Nifty 24150 CE</div>
+                                <div class="stock-meta">31 Dec 2025</div>
+                            </div>
+                            <div class="stock-middle">
+                                <div class="stock-middle-value">25%</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,49</div>
+                            </div>
+                        </div>
+                        <div class="stock-row three-col">
+                            <div class="stock-left">
+                                <div class="stock-symbol">Nifty 24150 CE</div>
+                                <div class="stock-meta">31 Dec 2025</div>
+                            </div>
+                            <div class="stock-middle">
+                                <div class="stock-middle-value">25%</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,49</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="home-indicator">
+                        <div class="home-indicator-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 4: Dividend Stocks Detail -->
+        <div class="screen-wrapper">
+            <div class="screen-label">4. Dividend Stocks</div>
+            <div class="phone-container" id="phone-4">
+                <div class="notch"></div>
+                <div class="screen active">
+                    <div class="status-bar">
+                        <span class="status-time">9:41</span>
+                        <div class="status-icons">
+                            <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M2 22h20V2z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="detail-header">
+                        <div>
+                            <div class="detail-title">Dividend Stocks</div>
+                        </div>
+                        <button class="follow-btn" onclick="toggleFollow(this)">
+                            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                            Follow
+                        </button>
+                    </div>
+
+                    <div class="filter-tag">
+                        <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+                        <span>Large Cap, FMCG</span>
+                    </div>
+
+                    <div class="column-header">
+                        <span>Scrip</span>
+                        <span>Dividend</span>
+                        <span>Price</span>
+                    </div>
+
+                    <div class="content-area">
+                        <div class="stock-row three-col">
+                            <div class="stock-left">
+                                <div class="stock-symbol">ITC</div>
+                                <div class="stock-meta">NSE</div>
+                            </div>
+                            <div class="stock-middle">
+                                <div class="stock-middle-value">25%</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,49</div>
+                            </div>
+                        </div>
+                        <div class="stock-row three-col">
+                            <div class="stock-left">
+                                <div class="stock-symbol">Swaraj Engines</div>
+                                <div class="stock-meta">NSE</div>
+                            </div>
+                            <div class="stock-middle">
+                                <div class="stock-middle-value">25%</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,49</div>
+                            </div>
+                        </div>
+                        <div class="stock-row three-col">
+                            <div class="stock-left">
+                                <div class="stock-symbol">Nifty 24150 CE</div>
+                                <div class="stock-meta">NSE</div>
+                            </div>
+                            <div class="stock-middle">
+                                <div class="stock-middle-value">25%</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,49</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="home-indicator">
+                        <div class="home-indicator-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 5: MACD Bullish Detail -->
+        <div class="screen-wrapper">
+            <div class="screen-label">5. MACD Bullish (Screener)</div>
+            <div class="phone-container" id="phone-5">
+                <div class="notch"></div>
+                <div class="screen active">
+                    <div class="status-bar">
+                        <span class="status-time">9:41</span>
+                        <div class="status-icons">
+                            <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M2 22h20V2z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="detail-header">
+                        <div>
+                            <div class="detail-title">MACD Bullish</div>
+                        </div>
+                        <button class="follow-btn" onclick="toggleFollow(this)">
+                            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                            Follow
+                        </button>
+                    </div>
+
+                    <div class="filter-tag">
+                        <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+                        <span>Large Cap, FMCG</span>
+                    </div>
+
+                    <div class="column-header" style="grid-template-columns: 1fr 60px;">
+                        <span>Scrip</span>
+                        <span>Price</span>
+                    </div>
+
+                    <div class="content-area">
+                        <div class="stock-row" style="display: grid; grid-template-columns: 1fr 60px; gap: 8px;">
+                            <div class="stock-left">
+                                <div class="stock-symbol">Nifty 25000 CE</div>
+                                <div class="stock-meta">31 Dec 2025</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,49</div>
+                            </div>
+                        </div>
+                        <div class="stock-row" style="display: grid; grid-template-columns: 1fr 60px; gap: 8px;">
+                            <div class="stock-left">
+                                <div class="stock-symbol">Nifty 24150 CE</div>
+                                <div class="stock-meta">31 Dec 2025</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,49</div>
+                            </div>
+                        </div>
+                        <div class="stock-row" style="display: grid; grid-template-columns: 1fr 60px; gap: 8px;">
+                            <div class="stock-left">
+                                <div class="stock-symbol">Nifty 24150 CE</div>
+                                <div class="stock-meta">31 Dec 2025</div>
+                            </div>
+                            <div class="stock-right">
+                                <div class="stock-price">1,49</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="home-indicator">
+                        <div class="home-indicator-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle bottom sheet
+        function openSheet(id) {
+            document.getElementById(`overlay-${id}`).classList.add('active');
+            document.getElementById(`sheet-${id}`).classList.add('active');
+        }
+
+        function closeSheet(id) {
+            document.getElementById(`overlay-${id}`).classList.remove('active');
+            document.getElementById(`sheet-${id}`).classList.remove('active');
+        }
+
+        // Toggle follow button
+        function toggleFollow(btn) {
+            btn.classList.toggle('following');
+            if (btn.classList.contains('following')) {
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Following';
+            } else {
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Follow';
+            }
+        }
+
+        // Category chip selection
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Tab selection
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Initialize - show bottom sheet on first screen
+        setTimeout(() => {
+            document.getElementById('overlay-1').classList.add('active');
+        }, 500);
+    </script>
+</body>
+</html>

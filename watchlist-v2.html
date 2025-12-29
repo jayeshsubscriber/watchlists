@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Watchlist v2 - Creation & Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #fff;
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background-color: #5C2D4E;
+            padding: 12px 16px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .status-time {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .status-icons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+
+        .battery {
+            background: rgba(255,255,255,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #FFD700;
+        }
+
+        /* Header */
+        .header {
+            background-color: #5C2D4E;
+            padding: 12px 16px 0;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 13px;
+            color: #5C2D4E;
+        }
+
+        .logo-badge {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: #2196F3;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-badge svg {
+            width: 8px;
+            height: 8px;
+            fill: white;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .header-icon {
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .header-icon:hover {
+            opacity: 1;
+        }
+
+        .header-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: white;
+            fill: none;
+        }
+
+        .icon-360 {
+            font-size: 9px;
+            color: white;
+            margin-top: -2px;
+        }
+
+        /* Edit Mode Button */
+        .edit-mode-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .edit-mode-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .edit-mode-btn.active {
+            background: white;
+            color: #5C2D4E;
+        }
+
+        /* Watchlist Tabs */
+        .watchlist-tabs-container {
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 0 8px;
+        }
+
+        .watchlist-tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .watchlist-tab {
+            flex-shrink: 0;
+            padding: 12px 14px;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .watchlist-tab:hover {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .watchlist-tab.active {
+            color: white;
+            font-weight: 600;
+        }
+
+        .watchlist-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 14px;
+            right: 14px;
+            height: 3px;
+            background: white;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .watchlist-tab .tab-count {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-left: 4px;
+        }
+
+        /* Long-press indicator */
+        .watchlist-tab.pressing {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+
+        /* Edit mode styles for tabs */
+        .watchlist-tab.edit-mode {
+            padding-right: 32px;
+        }
+
+        .watchlist-tab .delete-btn {
+            display: none;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            background: #E54D42;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .watchlist-tab .delete-btn svg {
+            width: 10px;
+            height: 10px;
+            stroke: white;
+            stroke-width: 2.5;
+        }
+
+        .watchlist-tab.edit-mode .delete-btn {
+            display: flex;
+        }
+
+        /* NEW: Add Watchlist Tab */
+        .add-watchlist-tab {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            border-left: 1px solid rgba(255,255,255,0.2);
+            margin-left: 8px;
+        }
+
+        .add-watchlist-tab:hover {
+            color: white;
+        }
+
+        .add-watchlist-tab svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        /* Market Indices */
+        .indices-bar {
+            background-color: #5C2D4E;
+            padding: 12px 16px 14px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .index-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .index-name {
+            color: rgba(255,255,255,0.9);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .index-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .index-value.negative {
+            color: #E54D42;
+        }
+
+        .index-value.positive {
+            color: #22C55E;
+        }
+
+        .index-change {
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .index-divider {
+            width: 1px;
+            height: 36px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .indices-expand {
+            margin-left: auto;
+            cursor: pointer;
+        }
+
+        .indices-expand svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            opacity: 0.7;
+        }
+
+        /* Swipe Container */
+        .swipe-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .watchlist-panels {
+            display: flex;
+            transition: transform 0.3s ease-out;
+            width: 100%;
+        }
+
+        .watchlist-panel {
+            width: 100%;
+            min-width: 100%;
+            flex-shrink: 0;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        /* Stock List */
+        .stock-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .stock-row:active {
+            background: #f8f8f8;
+        }
+
+        .stock-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stock-symbol {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .stock-exchange {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .stock-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .stock-price {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .stock-price.positive {
+            color: #22A06B;
+        }
+
+        .stock-price.negative {
+            color: #E54D42;
+        }
+
+        .stock-change {
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .stock-change.positive {
+            color: #22A06B;
+        }
+
+        .stock-change.negative {
+            color: #E54D42;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 32px;
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: #7C3AED;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .empty-state-btn {
+            background: #5C2D4E;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .empty-state-btn:hover {
+            background: #4a2440;
+            transform: translateY(-1px);
+        }
+
+        .empty-state-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: white;
+        }
+
+        /* Bottom Sheet Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Bottom Sheet */
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 0;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            z-index: 101;
+            max-width: 430px;
+            margin: 0 auto;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .bottom-sheet.active {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            margin: 12px auto 0;
+        }
+
+        .sheet-header {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sheet-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .sheet-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .sheet-close:hover {
+            background: #eee;
+        }
+
+        .sheet-close svg {
+            width: 18px;
+            height: 18px;
+            stroke: #666;
+        }
+
+        .sheet-content {
+            padding: 20px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #5C2D4E;
+            box-shadow: 0 0 0 3px rgba(92, 45, 78, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #aaa;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .char-count {
+            float: right;
+            color: #aaa;
+        }
+
+        /* Preset Templates */
+        .preset-section {
+            margin-bottom: 24px;
+        }
+
+        .preset-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .preset-item {
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .preset-item:hover {
+            border-color: #5C2D4E;
+            background: #faf5f9;
+        }
+
+        .preset-item.selected {
+            border-color: #5C2D4E;
+            background: #5C2D4E;
+            color: white;
+        }
+
+        .preset-item-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .preset-item-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #5C2D4E;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            background: #4a2440;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .submit-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+        }
+
+        /* Context Menu (for long-press) */
+        .context-menu {
+            position: fixed;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            min-width: 180px;
+            z-index: 102;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.9);
+            transition: all 0.2s;
+        }
+
+        .context-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .context-menu-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .context-menu-item:hover {
+            background: #f5f5f5;
+        }
+
+        .context-menu-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: #666;
+        }
+
+        .context-menu-item span {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .context-menu-item.danger span {
+            color: #E54D42;
+        }
+
+        .context-menu-item.danger svg {
+            stroke: #E54D42;
+        }
+
+        .context-menu-divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 8px 0;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 103;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.success {
+            background: #22A06B;
+        }
+
+        .toast.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast svg {
+            width: 18px;
+            height: 18px;
+            stroke: white;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: #fff;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 20px;
+            position: sticky;
+            bottom: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            cursor: pointer;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: #666;
+            fill: none;
+        }
+
+        .nav-item.active svg {
+            stroke: #5C2D4E;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .nav-item.active span {
+            color: #5C2D4E;
+            font-weight: 600;
+        }
+
+        /* Feature Badge */
+        .feature-badge {
+            position: fixed;
+            top: 60px;
+            right: 16px;
+            background: linear-gradient(135deg, #22A06B 0%, #16a34a 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(34, 160, 107, 0.4);
+            z-index: 50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Hint tooltip */
+        .hint-tooltip {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            white-space: nowrap;
+            margin-top: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+
+        .hint-tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-bottom-color: #333;
+        }
+
+        .add-watchlist-tab:hover .hint-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Feature Badge -->
+    <div class="feature-badge">✨ New: Create & Manage</div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-time">11:01</div>
+        <div class="status-icons">
+            <span>●●○○</span>
+            <span class="battery">33⚡</span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-top">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-text">up</span>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                </div>
+                <span class="header-title">My Watchlists</span>
+            </div>
+            <div class="header-icons">
+                <button class="edit-mode-btn" id="editModeBtn" onclick="toggleEditMode()">
+                    Edit
+                </button>
+            </div>
+        </div>
+
+        <!-- Watchlist Tabs with Add Button -->
+        <div class="watchlist-tabs-container" id="watchlistTabs">
+            <div class="watchlist-tab active" data-index="0" data-id="1" onclick="switchWatchlist(0)" oncontextmenu="showContextMenu(event, 0)">
+                MACD Bullish<span class="tab-count">(9)</span>
+                <div class="delete-btn" onclick="event.stopPropagation(); deleteWatchlist(0)">
+                    <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </div>
+            </div>
+            <div class="watchlist-tab" data-index="1" data-id="2" onclick="switchWatchlist(1)" oncontextmenu="showContextMenu(event, 1)">
+                High Volume<span class="tab-count">(12)</span>
+                <div class="delete-btn" onclick="event.stopPropagation(); deleteWatchlist(1)">
+                    <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </div>
+            </div>
+            <div class="watchlist-tab" data-index="2" data-id="3" onclick="switchWatchlist(2)" oncontextmenu="showContextMenu(event, 2)">
+                Breakout<span class="tab-count">(5)</span>
+                <div class="delete-btn" onclick="event.stopPropagation(); deleteWatchlist(2)">
+                    <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </div>
+            </div>
+            
+            <!-- NEW: Add Watchlist Tab -->
+            <div class="add-watchlist-tab" onclick="openCreateSheet()">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                New
+                <span class="hint-tooltip">Create a new watchlist</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Indices -->
+    <div class="indices-bar">
+        <div class="index-item">
+            <span class="index-name">NIFTY 50</span>
+            <span class="index-value negative">26,042.30</span>
+            <span class="index-change">-99.80 (0.38%)</span>
+        </div>
+        <div class="index-divider"></div>
+        <div class="index-item">
+            <span class="index-name">NIFTY BANK</span>
+            <span class="index-value negative">59,011.35</span>
+            <span class="index-change">-172.25 (0.29%)</span>
+        </div>
+        <div class="indices-expand">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M6 9l6 6 6-6"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Swipeable Watchlist Container -->
+    <div class="swipe-container" id="swipeContainer">
+        <div class="watchlist-panels" id="watchlistPanels">
+            <!-- Panel 1: MACD Bullish -->
+            <div class="watchlist-panel">
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">GPPL</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price negative">183.02</span>
+                        <span class="stock-change negative">-8.99 (4.68%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">RECLTD</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">357.10</span>
+                        <span class="stock-change positive">+2.35 (0.66%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">PETRONET</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">281.70</span>
+                        <span class="stock-change positive">+0.65 (0.23%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">TEXRAIL</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">140.09</span>
+                        <span class="stock-change positive">+6.00 (4.47%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">JSWENERGY</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price negative">479.40</span>
+                        <span class="stock-change negative">-4.95 (1.02%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">RAIN</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">138.50</span>
+                        <span class="stock-change positive">+9.29 (7.19%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">EQUITASBNK</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">61.95</span>
+                        <span class="stock-change positive">+0.25 (0.41%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">TRIDENT</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price negative">26.88</span>
+                        <span class="stock-change negative">-0.14 (0.52%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">SIEMENS</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">3,100.90</span>
+                        <span class="stock-change positive">+2.90 (0.09%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 2: High Volume -->
+            <div class="watchlist-panel">
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">TATASTEEL</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">142.85</span>
+                        <span class="stock-change positive">+3.45 (2.48%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">SBIN</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price negative">812.30</span>
+                        <span class="stock-change negative">-5.20 (0.64%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">IDEA</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">14.25</span>
+                        <span class="stock-change positive">+0.85 (6.34%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">ZOMATO</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">258.40</span>
+                        <span class="stock-change positive">+12.30 (5.00%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">IRFC</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price negative">152.60</span>
+                        <span class="stock-change negative">-2.10 (1.36%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 3: Breakout -->
+            <div class="watchlist-panel">
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">ADANIPOWER</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">542.15</span>
+                        <span class="stock-change positive">+28.90 (5.63%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">TATAPOWER</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">398.75</span>
+                        <span class="stock-change positive">+15.20 (3.96%)</span>
+                    </div>
+                </div>
+                <div class="stock-row">
+                    <div class="stock-left">
+                        <span class="stock-symbol">JINDALSTEL</span>
+                        <span class="stock-exchange">NSE EQ</span>
+                    </div>
+                    <div class="stock-right">
+                        <span class="stock-price positive">892.40</span>
+                        <span class="stock-change positive">+42.15 (4.95%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="closeAllSheets()"></div>
+
+    <!-- Create Watchlist Bottom Sheet -->
+    <div class="bottom-sheet" id="createSheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+            <span class="sheet-title">Create Watchlist</span>
+            <button class="sheet-close" onclick="closeCreateSheet()">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="sheet-content">
+            <div class="form-group">
+                <label class="form-label">Watchlist Name</label>
+                <input type="text" class="form-input" id="watchlistName" placeholder="e.g., My Growth Stocks" maxlength="30" oninput="updateCharCount()">
+                <div class="form-hint">
+                    Give your watchlist a memorable name
+                    <span class="char-count" id="charCount">0/30</span>
+                </div>
+            </div>
+
+            <div class="preset-section">
+                <div class="preset-title">Or start with a template</div>
+                <div class="preset-grid">
+                    <div class="preset-item" onclick="selectPreset(this, 'momentum')">
+                        <div class="preset-item-icon">📈</div>
+                        <div class="preset-item-name">Momentum</div>
+                    </div>
+                    <div class="preset-item" onclick="selectPreset(this, 'dividend')">
+                        <div class="preset-item-icon">💰</div>
+                        <div class="preset-item-name">Dividends</div>
+                    </div>
+                    <div class="preset-item" onclick="selectPreset(this, 'sector')">
+                        <div class="preset-item-icon">🏭</div>
+                        <div class="preset-item-name">By Sector</div>
+                    </div>
+                    <div class="preset-item" onclick="selectPreset(this, 'custom')">
+                        <div class="preset-item-icon">✨</div>
+                        <div class="preset-item-name">Blank</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="createBtn" onclick="createWatchlist()" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                Create Watchlist
+            </button>
+        </div>
+    </div>
+
+    <!-- Edit Watchlist Bottom Sheet -->
+    <div class="bottom-sheet" id="editSheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+            <span class="sheet-title">Edit Watchlist</span>
+            <button class="sheet-close" onclick="closeEditSheet()">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="sheet-content">
+            <div class="form-group">
+                <label class="form-label">Watchlist Name</label>
+                <input type="text" class="form-input" id="editWatchlistName" placeholder="Watchlist name" maxlength="30">
+            </div>
+
+            <button class="submit-btn" onclick="saveWatchlistEdit()">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="editCurrentWatchlist()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <span>Rename</span>
+        </div>
+        <div class="context-menu-item" onclick="duplicateWatchlist()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <span>Duplicate</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item danger" onclick="deleteCurrentWatchlist()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            <span>Delete</span>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span id="toastMessage">Watchlist created!</span>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span>Home</span>
+        </div>
+        <div class="nav-item active">
+            <svg viewBox="0 0 24 24" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <line x1="7" y1="8" x2="17" y2="8"/>
+                <line x1="7" y1="12" x2="17" y2="12"/>
+                <line x1="7" y1="16" x2="13" y2="16"/>
+            </svg>
+            <span>My lists</span>
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" stroke-width="2">
+                <circle cx="9" cy="21" r="1"/>
+                <circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <span>Orders</span>
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2"/>
+                <path d="M16 7V5a4 4 0 0 0-8 0v2"/>
+            </svg>
+            <span>Portfolio</span>
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+            </svg>
+            <span>Funds</span>
+        </div>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        let totalWatchlists = 3;
+        let editMode = false;
+        let contextMenuIndex = null;
+        let selectedPreset = null;
+
+        const panels = document.getElementById('watchlistPanels');
+        const tabs = document.querySelectorAll('.watchlist-tab');
+
+        // Switch watchlist
+        function switchWatchlist(index) {
+            if (index < 0 || index >= totalWatchlists) return;
+            currentIndex = index;
+            
+            const offset = -index * 100;
+            panels.style.transform = `translateX(${offset}%)`;
+            
+            document.querySelectorAll('.watchlist-tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i === index);
+            });
+        }
+
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            const btn = document.getElementById('editModeBtn');
+            btn.classList.toggle('active', editMode);
+            btn.textContent = editMode ? 'Done' : 'Edit';
+            
+            document.querySelectorAll('.watchlist-tab').forEach(tab => {
+                tab.classList.toggle('edit-mode', editMode);
+            });
+        }
+
+        // Open create sheet
+        function openCreateSheet() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('createSheet').classList.add('active');
+            document.getElementById('watchlistName').focus();
+        }
+
+        // Close create sheet
+        function closeCreateSheet() {
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('createSheet').classList.remove('active');
+            document.getElementById('watchlistName').value = '';
+            updateCharCount();
+            clearPresetSelection();
+        }
+
+        // Close edit sheet
+        function closeEditSheet() {
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('editSheet').classList.remove('active');
+        }
+
+        // Close all sheets
+        function closeAllSheets() {
+            closeCreateSheet();
+            closeEditSheet();
+            hideContextMenu();
+        }
+
+        // Update character count
+        function updateCharCount() {
+            const input = document.getElementById('watchlistName');
+            const count = document.getElementById('charCount');
+            const btn = document.getElementById('createBtn');
+            
+            count.textContent = `${input.value.length}/30`;
+            btn.disabled = input.value.trim().length === 0 && !selectedPreset;
+        }
+
+        // Select preset template
+        function selectPreset(element, type) {
+            clearPresetSelection();
+            element.classList.add('selected');
+            selectedPreset = type;
+            
+            const presetNames = {
+                momentum: 'Momentum Stocks',
+                dividend: 'Dividend Stars',
+                sector: 'Sector Watch',
+                custom: ''
+            };
+            
+            const input = document.getElementById('watchlistName');
+            if (presetNames[type]) {
+                input.value = presetNames[type];
+            }
+            updateCharCount();
+        }
+
+        // Clear preset selection
+        function clearPresetSelection() {
+            document.querySelectorAll('.preset-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            selectedPreset = null;
+        }
+
+        // Create watchlist
+        function createWatchlist() {
+            const name = document.getElementById('watchlistName').value.trim() || 'New Watchlist';
+            
+            // Show success toast
+            showToast(`"${name}" created!`);
+            
+            // Close sheet
+            closeCreateSheet();
+            
+            // In real app, would add new tab and panel
+            console.log('Created watchlist:', name, 'Template:', selectedPreset);
+        }
+
+        // Show toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            toastMsg.textContent = message;
+            toast.classList.add('active', 'success');
+            
+            setTimeout(() => {
+                toast.classList.remove('active', 'success');
+            }, 3000);
+        }
+
+        // Context menu
+        function showContextMenu(event, index) {
+            event.preventDefault();
+            contextMenuIndex = index;
+            
+            const menu = document.getElementById('contextMenu');
+            const rect = event.target.getBoundingClientRect();
+            
+            menu.style.left = `${Math.min(rect.left, window.innerWidth - 200)}px`;
+            menu.style.top = `${rect.bottom + 8}px`;
+            menu.classList.add('active');
+            
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        // Hide context menu
+        function hideContextMenu() {
+            document.getElementById('contextMenu').classList.remove('active');
+            contextMenuIndex = null;
+        }
+
+        // Edit current watchlist
+        function editCurrentWatchlist() {
+            hideContextMenu();
+            
+            const tabs = document.querySelectorAll('.watchlist-tab');
+            const currentTab = tabs[contextMenuIndex];
+            const currentName = currentTab.textContent.replace(/\(\d+\)/, '').trim();
+            
+            document.getElementById('editWatchlistName').value = currentName;
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('editSheet').classList.add('active');
+        }
+
+        // Save watchlist edit
+        function saveWatchlistEdit() {
+            const newName = document.getElementById('editWatchlistName').value.trim();
+            if (newName) {
+                showToast(`Watchlist renamed to "${newName}"`);
+            }
+            closeEditSheet();
+        }
+
+        // Duplicate watchlist
+        function duplicateWatchlist() {
+            hideContextMenu();
+            showToast('Watchlist duplicated!');
+        }
+
+        // Delete watchlist
+        function deleteCurrentWatchlist() {
+            hideContextMenu();
+            if (confirm('Are you sure you want to delete this watchlist?')) {
+                showToast('Watchlist deleted');
+            }
+        }
+
+        // Delete watchlist from edit mode
+        function deleteWatchlist(index) {
+            if (confirm('Delete this watchlist?')) {
+                showToast('Watchlist deleted');
+            }
+        }
+
+        // Touch handling for swipe
+        let startX = 0;
+        let isDragging = false;
+        let startTransform = 0;
+
+        const swipeContainer = document.getElementById('swipeContainer');
+
+        swipeContainer.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+            startTransform = -currentIndex * 100;
+            panels.style.transition = 'none';
+        });
+
+        swipeContainer.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            
+            const currentX = e.touches[0].clientX;
+            const diffX = currentX - startX;
+            
+            const containerWidth = swipeContainer.offsetWidth;
+            const percentMove = (diffX / containerWidth) * 100;
+            const newTransform = startTransform + percentMove;
+            
+            if (newTransform > 0 || newTransform < -(totalWatchlists - 1) * 100) {
+                panels.style.transform = `translateX(${newTransform * 0.3}%)`;
+            } else {
+                panels.style.transform = `translateX(${newTransform}%)`;
+            }
+        });
+
+        swipeContainer.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            panels.style.transition = 'transform 0.3s ease-out';
+            
+            const endX = e.changedTouches[0].clientX;
+            const diff = endX - startX;
+            const threshold = swipeContainer.offsetWidth * 0.2;
+            
+            if (diff > threshold && currentIndex > 0) {
+                switchWatchlist(currentIndex - 1);
+            } else if (diff < -threshold && currentIndex < totalWatchlists - 1) {
+                switchWatchlist(currentIndex + 1);
+            } else {
+                switchWatchlist(currentIndex);
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') switchWatchlist(currentIndex - 1);
+            if (e.key === 'ArrowRight') switchWatchlist(currentIndex + 1);
+        });
+
+        // Close context menu on click outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.context-menu') && !e.target.closest('.watchlist-tab')) {
+                hideContextMenu();
+            }
+        });
+    </script>
+</body>
+</html>
